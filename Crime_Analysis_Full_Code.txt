@@ -1,0 +1,3153 @@
+=== CRIME PATTERN ANALYSIS SYSTEM FULL SOURCE CODE ===
+
+
+
+======================================================
+FILE: client\src\App.css
+======================================================
+
+.counter {
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+  margin-bottom: 24px;
+
+  &:hover {
+    border-color: var(--accent-border);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.hero {
+  position: relative;
+
+  .base,
+  .framework,
+  .vite {
+    inset-inline: 0;
+    margin: 0 auto;
+  }
+
+  .base {
+    width: 170px;
+    position: relative;
+    z-index: 0;
+  }
+
+  .framework,
+  .vite {
+    position: absolute;
+  }
+
+  .framework {
+    z-index: 1;
+    top: 34px;
+    height: 28px;
+    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
+      scale(1.4);
+  }
+
+  .vite {
+    z-index: 0;
+    top: 107px;
+    height: 26px;
+    width: auto;
+    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
+      scale(0.8);
+  }
+}
+
+#center {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  place-content: center;
+  place-items: center;
+  flex-grow: 1;
+
+  @media (max-width: 1024px) {
+    padding: 32px 20px 24px;
+    gap: 18px;
+  }
+}
+
+#next-steps {
+  display: flex;
+  border-top: 1px solid var(--border);
+  text-align: left;
+
+  & > div {
+    flex: 1 1 0;
+    padding: 32px;
+    @media (max-width: 1024px) {
+      padding: 24px 20px;
+    }
+  }
+
+  .icon {
+    margin-bottom: 16px;
+    width: 22px;
+    height: 22px;
+  }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+#docs {
+  border-right: 1px solid var(--border);
+
+  @media (max-width: 1024px) {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+#next-steps ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+  margin: 32px 0 0;
+
+  .logo {
+    height: 18px;
+  }
+
+  a {
+    color: var(--text-h);
+    font-size: 16px;
+    border-radius: 6px;
+    background: var(--social-bg);
+    display: flex;
+    padding: 6px 12px;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: box-shadow 0.3s;
+
+    &:hover {
+      box-shadow: var(--shadow);
+    }
+    .button-icon {
+      height: 18px;
+      width: 18px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    li {
+      flex: 1 1 calc(50% - 8px);
+    }
+
+    a {
+      width: 100%;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+  }
+}
+
+#spacer {
+  height: 88px;
+  border-top: 1px solid var(--border);
+  @media (max-width: 1024px) {
+    height: 48px;
+  }
+}
+
+.ticks {
+  position: relative;
+  width: 100%;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: -4.5px;
+    border: 5px solid transparent;
+  }
+
+  &::before {
+    left: 0;
+    border-left-color: var(--border);
+  }
+  &::after {
+    right: 0;
+    border-right-color: var(--border);
+  }
+}
+
+
+======================================================
+FILE: client\src\App.jsx
+======================================================
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { DataProvider } from './context/DataContext';
+import Navbar from './components/Navbar';
+
+import DashboardOverview from './pages/DashboardOverview';
+import SpatialIntelligence from './pages/SpatialIntelligence';
+import PredictiveHub from './pages/PredictiveHub';
+import TrendCenter from './pages/TrendCenter';
+import SocialSentinel from './pages/SocialSentinel';
+import CyberOverlay from './components/CyberOverlay';
+import ChatBot from './components/ChatBot';
+
+import './App.css';
+
+function App() {
+  return (
+    <DataProvider>
+      <Router>
+        <div className="min-h-screen bg-cyber-dark text-white font-['Outfit'] selection:bg-cyber-neon selection:text-black">
+          <CyberOverlay />
+          <div className="max-w-[1600px] mx-auto p-6 md:p-10">
+            <Navbar />
+            <main className="animate-enter">
+              <Routes>
+                <Route path="/" element={<DashboardOverview />} />
+                <Route path="/maps" element={<SpatialIntelligence />} />
+                <Route path="/predictions" element={<PredictiveHub />} />
+                <Route path="/analytics" element={<TrendCenter />} />
+                <Route path="/sentinel" element={<SocialSentinel />} />
+              </Routes>
+            </main>
+            <ChatBot />
+          </div>
+        </div>
+      </Router>
+    </DataProvider>
+  );
+}
+
+export default App;
+
+
+======================================================
+FILE: client\src\components\AlertSystem.jsx
+======================================================
+
+import React, { useEffect } from 'react';
+import io from 'socket.io-client';
+import toast, { Toaster } from 'react-hot-toast';
+import { AlertTriangle, MapPin } from 'lucide-react';
+
+const AlertSystem = () => {
+    useEffect(() => {
+        const socket = io('http://localhost:5000');
+
+        socket.on('CRIME_ALERT', (crime) => {
+            toast.custom((t) => (
+                <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} glass-card`}
+                     style={{ 
+                        border: '2px solid var(--accent-hot)', 
+                        background: 'rgba(10, 10, 18, 0.95)',
+                        padding: '16px',
+                        borderRadius: '16px',
+                        boxShadow: '0 0 30px rgba(255, 46, 99, 0.4)',
+                        maxWidth: '400px',
+                        width: '100%',
+                        pointerEvents: 'auto'
+                     }}>
+                    <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                        <div style={{ background: 'var(--accent-hot)', padding: '12px', borderRadius: '12px', boxShadow: '0 0 15px var(--accent-hot)' }}>
+                            <AlertTriangle color="white" size={24} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--accent-hot)', letterSpacing: '1px', marginBottom: '4px' }}>
+                                CRITICAL CRIME ALERT
+                            </div>
+                            <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'white', marginBottom: '4px' }}>
+                                {crime.type}
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                                {crime.description}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'white', opacity: 0.8 }}>
+                                <MapPin size={12} /> {crime.neighborhood}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ), { duration: 8000, position: 'top-right' });
+        });
+
+        return () => socket.disconnect();
+    }, []);
+
+    return <Toaster />;
+};
+
+export default AlertSystem;
+
+
+======================================================
+FILE: client\src\components\AnalyticsDashboard.jsx
+======================================================
+
+import React from 'react';
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, PieChart, Pie, Cell
+} from 'recharts';
+import { TrendingUp, PieChart as PieIcon, BarChart3 } from 'lucide-react';
+
+const COLORS = ['#00f2ff', '#bc13fe', '#ff2e63', '#22c55e', '#eab308'];
+
+const AnalyticsDashboard = ({ data }) => {
+  if (!data) return (
+    <div className="h-64 flex items-center justify-center text-white/20 font-black tracking-[0.3em] uppercase text-xs">
+        Initializing Analytics Engine...
+    </div>
+  );
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Monthly Growth */}
+      <div className="glass-card">
+        <div className="flex items-center gap-3 mb-8">
+            <TrendingUp size={20} className="text-cyber-neon" />
+            <h3 className="text-sm font-black tracking-widest uppercase">Growth Vector Analysis</h3>
+        </div>
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data.growth}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="month" stroke="#444" fontSize={10} tick={{ fill: '#666' }} />
+              <YAxis stroke="#444" fontSize={10} tick={{ fill: '#666' }} />
+              <Tooltip 
+                contentStyle={{ background: '#0a0a12', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                itemStyle={{ color: '#00f2ff', fontSize: '12px', fontWeight: 'bold' }}
+              />
+              <Line type="monotone" dataKey="count" stroke="#00f2ff" strokeWidth={4} dot={{ r: 6, fill: '#00f2ff' }} activeDot={{ r: 10, stroke: '#fff', strokeWidth: 2 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Category Distribution */}
+      <div className="glass-card">
+        <div className="flex items-center gap-3 mb-8">
+            <PieIcon size={20} className="text-cyber-purple" />
+            <h3 className="text-sm font-black tracking-widest uppercase">Categorical Distribution</h3>
+        </div>
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data.categories}
+                innerRadius={60}
+                outerRadius={100}
+                paddingAngle={5}
+                dataKey="value"
+              >
+                {data.categories.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip 
+                 contentStyle={{ background: '#0a0a12', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AnalyticsDashboard;
+
+
+======================================================
+FILE: client\src\components\ChatBot.jsx
+======================================================
+
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
+import { MessageSquare, X, Send, Bot, Terminal, ChevronRight } from 'lucide-react';
+import { useData } from '../context/DataContext';
+
+const ChatBot = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [messages, setMessages] = useState([
+        { role: 'assistant', content: 'Cyber Sentry AI active. State your analytical query.' }
+    ]);
+    const [input, setInput] = useState('');
+    const [loading, setLoading] = useState(false);
+    const { crimes } = useData();
+    const chatEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSend = async (e) => {
+        e.preventDefault();
+        if (!input.trim()) return;
+
+        const userMsg = { role: 'user', content: input };
+        setMessages(prev => [...prev, userMsg]);
+        setInput('');
+        setLoading(true);
+
+        try {
+            const stats = { totalCrimes: crimes.length };
+            const res = await axios.post('http://localhost:5000/api/chat', { 
+                query: input,
+                stats
+            });
+            setMessages(prev => [...prev, { role: 'assistant', content: res.data.response }]);
+        } catch (err) {
+            setMessages(prev => [...prev, { role: 'assistant', content: 'Connection to AI Engine lost. Check system logs.' }]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const quickQueries = [
+        "Risk Summary",
+        "Top Hotspots",
+        "System Help"
+    ];
+
+    return (
+        <div className="fixed bottom-6 right-6 z-[10000]">
+            {/* Chat Bubble */}
+            {!isOpen && (
+                <button 
+                    onClick={() => setIsOpen(true)}
+                    className="w-16 h-16 rounded-full bg-cyber-neon shadow-[0_0_20px_rgba(0,242,255,0.4)] flex items-center justify-center hover:scale-110 transition-all group"
+                >
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-cyber-dark animate-pulse" />
+                    <MessageSquare size={28} className="text-black group-hover:rotate-12 transition-all" />
+                </button>
+            )}
+
+            {/* Chat Window */}
+            {isOpen && (
+                <div className="glass-card w-[380px] h-[550px] flex flex-col !p-0 overflow-hidden border-cyber-neon/30 shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-enter">
+                    {/* Header */}
+                    <div className="p-4 border-b border-white/10 bg-cyber-neon/10 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-black rounded-lg border border-cyber-neon/30">
+                                <Bot size={20} className="text-cyber-neon" />
+                            </div>
+                            <div>
+                                <h3 className="text-xs font-black tracking-widest uppercase">CYBER_SENTRY_AI</h3>
+                                <div className="flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                    <span className="text-[9px] text-cyber-neon font-bold">COGNITIVE_CORE_ACTIVE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onClick={() => setIsOpen(false)} className="text-white/20 hover:text-white transition-colors">
+                            <X size={20} />
+                        </button>
+                    </div>
+
+                    {/* Messages */}
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-black/20">
+                        {messages.map((m, idx) => (
+                            <div key={idx} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`max-w-[80%] p-3 rounded-2xl text-xs leading-relaxed ${
+                                    m.role === 'user' 
+                                    ? 'bg-cyber-neon/20 border border-cyber-neon/30 text-white rounded-tr-none' 
+                                    : 'bg-white/5 border border-white/10 text-white/80 rounded-tl-none'
+                                }`}>
+                                    {m.role === 'assistant' && <div className="text-[9px] font-black text-cyber-neon uppercase mb-1 flex items-center gap-1"><Terminal size={10}/> Response:</div>}
+                                    {m.content}
+                                </div>
+                            </div>
+                        ))}
+                        {loading && (
+                            <div className="flex justify-start">
+                                <div className="bg-white/5 border border-white/10 p-3 rounded-2xl rounded-tl-none flex gap-1">
+                                    <span className="w-1.5 h-1.5 bg-cyber-neon/40 rounded-full animate-bounce" />
+                                    <span className="w-1.5 h-1.5 bg-cyber-neon/40 rounded-full animate-bounce [animation-delay:0.2s]" />
+                                    <span className="w-1.5 h-1.5 bg-cyber-neon/40 rounded-full animate-bounce [animation-delay:0.4s]" />
+                                </div>
+                            </div>
+                        )}
+                        <div ref={chatEndRef} />
+                    </div>
+
+                    {/* Quick Queries */}
+                    <div className="p-3 border-t border-white/10 flex gap-2 overflow-x-auto no-scrollbar">
+                        {quickQueries.map(q => (
+                            <button 
+                                key={q}
+                                onClick={() => { setInput(q); }}
+                                className="whitespace-nowrap px-3 py-1.5 rounded-full border border-white/10 text-[9px] font-bold uppercase text-white/40 hover:text-cyber-neon hover:border-cyber-neon/40 transition-all"
+                            >
+                                {q}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Input */}
+                    <form onSubmit={handleSend} className="p-4 border-t border-white/10 bg-black/40 flex gap-2">
+                        <input 
+                            type="text" 
+                            placeholder="Type analytical query..."
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-cyber-neon/40 transition-all"
+                        />
+                        <button type="submit" className="p-2 bg-cyber-neon rounded-xl text-black hover:scale-105 active:scale-95 transition-all">
+                            <Send size={18} />
+                        </button>
+                    </form>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default ChatBot;
+
+
+======================================================
+FILE: client\src\components\CyberOverlay.jsx
+======================================================
+
+import React from 'react';
+
+const CyberOverlay = () => {
+    return (
+        <>
+            {/* Cyber Grid */}
+            <div className="fixed inset-0 pointer-events-none z-[-1]" 
+                 style={{ 
+                    backgroundImage: `linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px)`,
+                    backgroundSize: '50px 50px'
+                 }} 
+            />
+            
+            {/* Scanlines */}
+            <div className="fixed inset-0 pointer-events-none z-[9999] opacity-[0.03]"
+                 style={{
+                    background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))',
+                    backgroundSize: '100% 4px, 3px 100%'
+                 }}
+            />
+
+            {/* Glowing Corner Accents */}
+            <div className="fixed top-0 left-0 w-32 h-32 border-t-2 border-l-2 border-cyber-neon opacity-20 pointer-events-none" />
+            <div className="fixed top-0 right-0 w-32 h-32 border-t-2 border-r-2 border-cyber-neon opacity-20 pointer-events-none" />
+            <div className="fixed bottom-0 left-0 w-32 h-32 border-b-2 border-l-2 border-cyber-neon opacity-20 pointer-events-none" />
+            <div className="fixed bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-cyber-neon opacity-20 pointer-events-none" />
+        </>
+    );
+};
+
+export default CyberOverlay;
+
+
+======================================================
+FILE: client\src\components\Dashboard.jsx
+======================================================
+
+import React from 'react';
+import { Shield, AlertTriangle, TrendingUp, MapPin } from 'lucide-react';
+
+const StatCard = ({ title, value, icon: Icon, color, trend }) => (
+    <div className="glass-card group hover:border-cyber-neon/50 relative overflow-hidden">
+        {/* Animated Background Glow */}
+        <div className={`absolute -right-10 -top-10 w-32 h-32 rounded-full opacity-10 group-hover:opacity-20 transition-opacity blur-3xl`} style={{ backgroundColor: color }} />
+        
+        <div className="flex justify-between items-start relative z-10">
+            <div>
+                <p className="text-cyber-neon/60 text-xs font-bold tracking-widest uppercase mb-1">{title}</p>
+                <h3 className="text-3xl font-black text-white tracking-tight">{value}</h3>
+                {trend && (
+                    <p className={`text-xs mt-2 flex items-center gap-1 ${trend.startsWith('+') ? 'text-cyber-hot' : 'text-green-400'}`}>
+                        {trend} <span className="text-white/40 font-normal">vs last month</span>
+                    </p>
+                )}
+            </div>
+            <div className="p-3 rounded-xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform">
+                <Icon size={24} style={{ color }} />
+            </div>
+        </div>
+        
+        {/* Bottom Progress Bar Decoration */}
+        <div className="absolute bottom-0 left-0 h-[2px] bg-cyber-neon/20 w-full">
+            <div className="h-full bg-cyber-neon shadow-[0_0_10px_#00f2ff]" style={{ width: '40%', backgroundColor: color }} />
+        </div>
+    </div>
+);
+
+const Dashboard = ({ crimes, hotspots }) => {
+    const totalCrimes = crimes.length;
+    const highSeverity = crimes.filter(c => c.severity === 'High').length;
+    const activeHotspots = hotspots.length;
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard 
+                title="Total Incidents" 
+                value={totalCrimes} 
+                icon={Shield} 
+                color="var(--accent-neon)"
+                trend="+12%"
+            />
+            <StatCard 
+                title="Critical Alerts" 
+                value={highSeverity} 
+                icon={AlertTriangle} 
+                color="var(--accent-hot)"
+                trend="+5%"
+            />
+            <StatCard 
+                title="Risk Prediction" 
+                value="Elevated" 
+                icon={TrendingUp} 
+                color="var(--accent-purple)"
+            />
+            <StatCard 
+                title="Active Hotspots" 
+                value={activeHotspots} 
+                icon={MapPin} 
+                color="var(--accent-neon)"
+                trend="-2%"
+            />
+        </div>
+    );
+};
+
+export default Dashboard;
+
+
+======================================================
+FILE: client\src\components\HeatmapView.jsx
+======================================================
+
+import React, { useMemo } from 'react';
+import { GoogleMap, useJsApiLoader, HeatmapLayer } from '@react-google-maps/api';
+
+const containerStyle = {
+  width: '100%',
+  height: '100%'
+};
+
+const center = {
+  lat: 40.7128,
+  lng: -74.0060
+};
+
+// Dark mode styles for Google Maps
+const darkStyles = [
+  { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+  {
+    featureType: "administrative.locality",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d59563" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d59563" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ color: "#263c3f" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#6b9a76" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#38414e" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#212a37" }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#9ca5b3" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#746855" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#1f2835" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#f3d19c" }],
+  },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [{ color: "#2f3948" }],
+  },
+  {
+    featureType: "transit.station",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d59563" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#17263c" }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#515c6d" }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.stroke",
+    stylers: [{ color: "#17263c" }],
+  },
+];
+
+const HeatmapView = ({ crimes }) => {
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: "YOUR_GOOGLE_MAPS_API_KEY", // Placeholder
+    libraries: ['visualization']
+  });
+
+  const heatmapData = useMemo(() => {
+    if (!crimes || !window.google) return [];
+    return crimes.map(crime => new window.google.maps.LatLng(crime.location.lat, crime.location.lng));
+  }, [crimes, isLoaded]);
+
+  return isLoaded ? (
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={12}
+      options={{
+        styles: darkStyles,
+        disableDefaultUI: true,
+        zoomControl: true,
+      }}
+    >
+      {heatmapData.length > 0 && (
+        <HeatmapLayer
+          data={heatmapData}
+          options={{
+            radius: 30,
+            opacity: 0.8,
+            gradient: [
+              'rgba(0, 255, 255, 0)',
+              'rgba(0, 255, 255, 1)',
+              'rgba(0, 191, 255, 1)',
+              'rgba(0, 127, 255, 1)',
+              'rgba(0, 63, 255, 1)',
+              'rgba(0, 0, 255, 1)',
+              'rgba(0, 0, 223, 1)',
+              'rgba(0, 0, 191, 1)',
+              'rgba(0, 0, 159, 1)',
+              'rgba(0, 0, 127, 1)',
+              'rgba(63, 0, 91, 1)',
+              'rgba(127, 0, 63, 1)',
+              'rgba(191, 0, 31, 1)',
+              'rgba(255, 0, 0, 1)'
+            ]
+          }}
+        />
+      )}
+    </GoogleMap>
+  ) : <div className="loading-container">Loading Google Maps...</div>;
+};
+
+export default React.memo(HeatmapView);
+
+
+======================================================
+FILE: client\src\components\MapView.jsx
+======================================================
+
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { useEffect } from 'react';
+
+// Component to handle auto-zooming or moving map if needed
+const MapController = ({ center }) => {
+    const map = useMap();
+    useEffect(() => {
+        if (center) map.setView(center, 13);
+    }, [center, map]);
+    return null;
+};
+
+const MapView = ({ crimes, hotspots, predictions }) => {
+    const defaultCenter = [40.7128, -74.0060]; // NYC as default
+
+    return (
+        <div style={{ height: '600px', width: '100%', position: 'relative' }}>
+            <MapContainer center={defaultCenter} zoom={12} scrollWheelZoom={true}>
+                <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                
+                {crimes.map(crime => (
+                    <CircleMarker
+                        key={crime._id}
+                        center={[crime.location.lat, crime.location.lng]}
+                        pathOptions={{ 
+                            color: crime.severity === 'High' ? '#ff2e63' : crime.severity === 'Medium' ? '#bc13fe' : '#00f2ff',
+                            fillColor: crime.severity === 'High' ? '#ff2e63' : crime.severity === 'Medium' ? '#bc13fe' : '#00f2ff',
+                            fillOpacity: 0.6
+                        }}
+                        radius={8}
+                    >
+                        <Popup>
+                            <div style={{ color: '#333' }}>
+                                <strong>{crime.type}</strong><br />
+                                <span>Severity: {crime.severity}</span><br />
+                                <span>Neighborhood: {crime.neighborhood}</span><br />
+                                <small>{new Date(crime.timestamp).toLocaleString()}</small>
+                            </div>
+                        </Popup>
+                    </CircleMarker>
+                ))}
+
+                {hotspots.map((spot, idx) => (
+                    <CircleMarker
+                        key={`hotspot-${idx}`}
+                        center={[spot.avgLat, spot.avgLng]}
+                        pathOptions={{ 
+                            color: 'transparent',
+                            fillColor: '#ff2e63',
+                            fillOpacity: 0.1
+                        }}
+                        radius={spot.count * 15}
+                    />
+                ))}
+
+                {/* Predictive Layer */}
+                {predictions && predictions.map((p, idx) => (
+                    p.riskScore > 40 && (
+                        <CircleMarker
+                            key={`pred-${idx}`}
+                            center={[p.lat, p.lng]}
+                            pathOptions={{ 
+                                color: p.level === 'Critical' ? '#ff2e63' : '#bc13fe',
+                                weight: 2,
+                                fillColor: p.level === 'Critical' ? '#ff2e63' : '#bc13fe',
+                                fillOpacity: 0.15,
+                                dashArray: '5, 10'
+                            }}
+                            radius={p.riskScore * 0.8}
+                            className="predictive-pulse"
+                        >
+                            <Popup>
+                                <div style={{ color: '#333' }}>
+                                    <strong>PREDICTED RISK: {p.level}</strong><br />
+                                    <span>Score: {p.riskScore}%</span><br />
+                                    <span>{p.neighborhood}</span><br />
+                                    <p style={{ fontSize: '0.8rem', marginTop: '5px' }}>{p.insight}</p>
+                                </div>
+                            </Popup>
+                        </CircleMarker>
+                    )
+                ))}
+            </MapContainer>
+        </div>
+    );
+};
+
+export default MapView;
+
+
+======================================================
+FILE: client\src\components\MLPredictions.jsx
+======================================================
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Brain, Target, ArrowUpRight, Zap } from 'lucide-react';
+import { useData } from '../context/DataContext';
+
+const MLPredictions = () => {
+    const { predictions, loading, fetchData } = useData();
+
+    return (
+        <div className="glass-card relative overflow-hidden">
+            {/* Background Accent */}
+            <div className="absolute top-0 right-0 p-10 opacity-5">
+                <Brain size={120} className="text-cyber-neon" />
+            </div>
+
+            <div className="flex justify-between items-center mb-8 relative z-10">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-cyber-purple/20 border border-cyber-purple/40 rounded-xl">
+                        <Zap size={20} className="text-cyber-purple" />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-black tracking-widest uppercase text-white">Neural Forecast Engine</h3>
+                        <p className="text-[10px] text-cyber-purple font-bold tracking-widest mt-0.5">RANDOM_FOREST_V2.4</p>
+                    </div>
+                </div>
+                <button 
+                    onClick={fetchData}
+                    className="text-[10px] font-black tracking-widest text-cyber-neon hover:text-white transition-colors flex items-center gap-1 uppercase"
+                >
+                    Recalculate Models <ArrowUpRight size={12} />
+                </button>
+            </div>
+
+            {loading ? (
+                <div className="h-40 flex items-center justify-center text-white/20 font-black tracking-widest text-[10px] uppercase">
+                    Running Probability Distributions...
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
+                    {predictions.map((p, idx) => (
+                        <div key={idx} className="bg-white/5 border border-white/10 p-5 rounded-2xl hover:border-cyber-purple/50 transition-all group">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="text-[10px] font-black text-cyber-purple tracking-widest uppercase">{p.crime_type}</div>
+                                <div className="text-xl font-black text-white">{p.probability}%</div>
+                            </div>
+                            <div className="text-sm font-bold text-white/80 mb-4">{p.neighborhood}</div>
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-white/30 uppercase tracking-wider">
+                                <Target size={12} className="text-cyber-neon" /> Area Cluster
+                            </div>
+                            
+                            {/* Visual Intensity Bar */}
+                            <div className="mt-4 h-1 bg-white/5 rounded-full overflow-hidden">
+                                <div 
+                                    className="h-full bg-cyber-purple shadow-[0_0_8px_#bc13fe] transition-all duration-1000" 
+                                    style={{ width: `${p.probability}%` }} 
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default MLPredictions;
+
+
+======================================================
+FILE: client\src\components\Navbar.jsx
+======================================================
+
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { Layout, Map, Brain, BarChart2, Radio, Shield } from 'lucide-react';
+
+const Navbar = () => {
+    const navItems = [
+        { path: '/', icon: Layout, label: 'Dashboard' },
+        { path: '/maps', icon: Map, label: 'Spatial' },
+        { path: '/predictions', icon: Brain, label: 'Forecast' },
+        { path: '/analytics', icon: BarChart2, label: 'Trends' },
+        { path: '/sentinel', icon: Radio, label: 'Sentinel' },
+    ];
+
+    return (
+        <nav className="glass-card" style={{ 
+            position: 'sticky', 
+            top: '20px', 
+            zIndex: 1000, 
+            display: 'flex', 
+            justifyContent: 'center', 
+            gap: '24px', 
+            padding: '12px 24px',
+            marginBottom: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '16px',
+            background: 'rgba(10, 10, 18, 0.8)',
+            backdropFilter: 'blur(12px)'
+        }}>
+            <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Shield size={20} color="#00f2ff" />
+                <span style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '0.8rem', color: 'white' }}>CPS ADMIN</span>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {navItems.map((item) => (
+                    <NavLink 
+                        key={item.path} 
+                        to={item.path}
+                        style={({ isActive }) => ({
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            textDecoration: 'none',
+                            color: isActive ? '#00f2ff' : '#888',
+                            fontSize: '0.9rem',
+                            fontWeight: isActive ? 'bold' : 'normal',
+                            transition: 'all 0.3s',
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            background: isActive ? 'rgba(0, 242, 255, 0.1)' : 'transparent',
+                            boxShadow: isActive ? '0 0 10px rgba(0, 242, 255, 0.2)' : 'none',
+                            border: isActive ? '1px solid rgba(0, 242, 255, 0.3)' : '1px solid transparent'
+                        })}
+                    >
+                        <item.icon size={18} />
+                        <span className="nav-label">{item.label}</span>
+                    </NavLink>
+                ))}
+            </div>
+        </nav>
+    );
+};
+
+export default Navbar;
+
+
+======================================================
+FILE: client\src\components\SmartInsights.jsx
+======================================================
+
+import React from 'react';
+import { Brain, TrendingUp, AlertTriangle, ShieldCheck } from 'lucide-react';
+
+const InsightCard = ({ title, content, type }) => {
+    const getColors = () => {
+        switch(type) {
+            case 'danger': return { bg: 'bg-cyber-hot/10', border: 'border-cyber-hot/30', text: 'text-cyber-hot', icon: AlertTriangle };
+            case 'warning': return { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-500', icon: TrendingUp };
+            default: return { bg: 'bg-cyber-neon/10', border: 'border-cyber-neon/30', text: 'text-cyber-neon', icon: ShieldCheck };
+        }
+    };
+
+    const { bg, border, text, icon: Icon } = getColors();
+
+    return (
+        <div className={`p-5 rounded-2xl ${bg} border ${border} transition-all hover:translate-x-1`}>
+            <div className="flex items-start gap-4">
+                <div className={`p-2 rounded-lg ${bg} border ${border}`}>
+                    <Icon size={18} className={text} />
+                </div>
+                <div>
+                    <h4 className={`text-xs font-black tracking-widest uppercase mb-1 ${text}`}>{title}</h4>
+                    <p className="text-sm text-white/70 leading-relaxed">{content}</p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const SmartInsights = ({ crimes }) => {
+    // Basic logic to generate insights
+    const insights = [
+        {
+            title: "Peak Activity Alert",
+            content: "Spatial patterns suggest a 15% increase in evening incidents within Midtown. Deployment of high-visibility patrols recommended.",
+            type: "danger"
+        },
+        {
+            title: "Trend Shift Detected",
+            content: "Vandalism incidents have plateaued across the Eastern district. Cyber-crime reports are trending upward in residential zones.",
+            type: "warning"
+        },
+        {
+            title: "Resource Efficiency",
+            content: "Current patrol vectors in Harlem show 92% coverage efficiency. Predictive hotspots are being monitored in real-time.",
+            type: "success"
+        }
+    ];
+
+    return (
+        <div className="space-y-4">
+            {insights.map((insight, idx) => (
+                <InsightCard key={idx} {...insight} />
+            ))}
+        </div>
+    );
+};
+
+export default SmartInsights;
+
+
+======================================================
+FILE: client\src\components\TemporalAnalysis.jsx
+======================================================
+
+import React from 'react';
+import { Clock } from 'lucide-react';
+
+const TemporalAnalysis = ({ data }) => {
+    if (!data || data.length === 0) return null;
+
+    // Ensure all 24 hours are represented
+    const fullData = Array.from({ length: 24 }, (_, i) => {
+        const found = data.find(d => d._id === i);
+        return { hour: i, count: found ? found.count : 0 };
+    });
+
+    const maxCount = Math.max(...fullData.map(d => d.count), 1);
+    const height = 150;
+    const width = 1000;
+    const barWidth = width / 24;
+
+    return (
+        <div className="glass-card" style={{ marginBottom: '24px' }}>
+            <h3 style={{ margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Clock size={20} color="var(--accent-neon)" /> TEMPORAL CRIME TRENDS (24H)
+            </h3>
+            
+            <div style={{ position: 'relative', height: `${height + 40}px`, width: '100%', overflowX: 'auto' }}>
+                <svg width="100%" height={height + 40} viewBox={`0 0 ${width} ${height + 40}`} preserveAspectRatio="none">
+                    {/* Grid lines */}
+                    {[0, 0.5, 1].map(p => (
+                        <line 
+                            key={p} 
+                            x1="0" y1={height - (height * p)} 
+                            x2={width} y2={height - (height * p)} 
+                            stroke="var(--glass-border)" 
+                            strokeDasharray="4"
+                        />
+                    ))}
+
+                    {/* Bars */}
+                    {fullData.map((d, i) => {
+                        const barH = (d.count / maxCount) * height;
+                        const isPeak = d.count === maxCount && d.count > 0;
+                        
+                        return (
+                            <g key={i}>
+                                <rect
+                                    x={i * barWidth + 2}
+                                    y={height - barH}
+                                    width={barWidth - 4}
+                                    height={barH}
+                                    fill={isPeak ? 'var(--accent-neon)' : 'rgba(0, 255, 242, 0.2)'}
+                                    rx="4"
+                                    className={isPeak ? 'neon-pulse' : ''}
+                                    style={{ transition: 'all 0.5s ease' }}
+                                />
+                                <text 
+                                    x={i * barWidth + barWidth/2} 
+                                    y={height + 20} 
+                                    fill="var(--text-secondary)" 
+                                    fontSize="10" 
+                                    textAnchor="middle"
+                                >
+                                    {i}:00
+                                </text>
+                                {d.count > 0 && (
+                                    <text 
+                                        x={i * barWidth + barWidth/2} 
+                                        y={height - barH - 5} 
+                                        fill="white" 
+                                        fontSize="10" 
+                                        textAnchor="middle"
+                                    >
+                                        {d.count}
+                                    </text>
+                                )}
+                            </g>
+                        );
+                    })}
+                </svg>
+            </div>
+
+            <div style={{ marginTop: '16px', display: 'flex', gap: '20px' }}>
+                <div style={{ background: 'rgba(0, 255, 242, 0.1)', padding: '10px 15px', borderRadius: '8px', borderLeft: '4px solid var(--accent-neon)' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Peak Hour</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                        {fullData.find(d => d.count === maxCount)?._id}:00
+                    </div>
+                </div>
+                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '10px 15px', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Total Analyzed</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                        {fullData.reduce((acc, curr) => acc + curr.count, 0)}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default TemporalAnalysis;
+
+
+======================================================
+FILE: client\src\components\TimeAnalytics.jsx
+======================================================
+
+import React from 'react';
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, Cell
+} from 'recharts';
+import { Clock, Calendar, Thermometer } from 'lucide-react';
+
+const TimeAnalytics = ({ data }) => {
+  if (!data) return null;
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginTop: '32px' }}>
+      {/* Hourly Intensity */}
+      <div className="glass-card" style={{ height: '350px', display: 'flex', flexDirection: 'column' }}>
+        <h3 style={{ margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
+          <Clock size={18} color="var(--accent-neon)" /> HOURLY INTENSITY
+        </h3>
+        <div style={{ flex: 1 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data.hourly}>
+              <defs>
+                <linearGradient id="colorHour" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--accent-neon)" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="var(--accent-neon)" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="hour" stroke="#888" fontSize={10} tick={{ fontSize: 8 }} />
+              <YAxis stroke="#888" fontSize={10} />
+              <Tooltip 
+                contentStyle={{ background: 'rgba(10, 10, 18, 0.95)', border: '1px solid var(--glass-border)' }}
+                itemStyle={{ color: 'var(--accent-neon)' }}
+              />
+              <Area type="monotone" dataKey="count" stroke="var(--accent-neon)" fillOpacity={1} fill="url(#colorHour)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Dangerous Days */}
+      <div className="glass-card" style={{ height: '350px', display: 'flex', flexDirection: 'column' }}>
+        <h3 style={{ margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
+          <Calendar size={18} color="var(--accent-purple)" /> DANGEROUS DAYS
+        </h3>
+        <div style={{ flex: 1 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data.daily}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="day" stroke="#888" fontSize={10} />
+              <YAxis stroke="#888" fontSize={10} />
+              <Tooltip 
+                 contentStyle={{ background: 'rgba(10, 10, 18, 0.95)', border: '1px solid var(--glass-border)' }}
+              />
+              <Bar dataKey="count" fill="var(--accent-purple)" radius={[4, 4, 0, 0]}>
+                {data.daily.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.count === Math.max(...data.daily.map(d => d.count)) ? 'var(--accent-hot)' : 'var(--accent-purple)'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Seasonal Patterns */}
+      <div className="glass-card" style={{ height: '350px', display: 'flex', flexDirection: 'column' }}>
+        <h3 style={{ margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
+          <Thermometer size={18} color="var(--accent-hot)" /> SEASONAL PATTERNS
+        </h3>
+        <div style={{ flex: 1 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data.seasonal}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="month" stroke="#888" fontSize={10} />
+              <YAxis stroke="#888" fontSize={10} />
+              <Tooltip 
+                 contentStyle={{ background: 'rgba(10, 10, 18, 0.95)', border: '1px solid var(--glass-border)' }}
+              />
+              <Bar dataKey="count" fill="var(--accent-hot)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TimeAnalytics;
+
+
+======================================================
+FILE: client\src\context\DataContext.jsx
+======================================================
+
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+
+const DataContext = createContext();
+
+export const DataProvider = ({ children }) => {
+    const [crimes, setCrimes] = useState([]);
+    const [hotspots, setHotspots] = useState([]);
+    const [temporalData, setTemporalData] = useState([]);
+    const [trends, setTrends] = useState([]);
+    const [predictions, setPredictions] = useState([]);
+    const [analyticsData, setAnalyticsData] = useState(null);
+    const [timeDepthData, setTimeDepthData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const [crimeRes, hotspotRes, temporalRes, trendRes, predRes, analyticsRes, timeDepthRes] = await Promise.all([
+                axios.get('http://localhost:5000/api/crimes'),
+                axios.get('http://localhost:5000/api/hotspots'),
+                axios.get('http://localhost:5000/api/analysis/temporal'),
+                axios.get('http://localhost:5000/api/analysis/hotspot-trends'),
+                axios.get('http://localhost:5000/api/analysis/predictions'),
+                axios.get('http://localhost:5000/api/analysis/advanced-stats'),
+                axios.get('http://localhost:5000/api/analysis/time-depth')
+            ]);
+            setCrimes(crimeRes.data);
+            setHotspots(hotspotRes.data);
+            setTemporalData(temporalRes.data);
+            setTrends(trendRes.data);
+            setPredictions(predRes.data);
+            setAnalyticsData(analyticsRes.data);
+            setTimeDepthData(timeDepthRes.data);
+        } catch (err) {
+            console.error('Error fetching crime data:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    return (
+        <DataContext.Provider value={{ 
+            crimes, hotspots, temporalData, trends, predictions, 
+            analyticsData, timeDepthData, loading, fetchData 
+        }}>
+            {children}
+        </DataContext.Provider>
+    );
+};
+
+export const useData = () => useContext(DataContext);
+
+
+======================================================
+FILE: client\src\index.css
+======================================================
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-dark: #0a0a12;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --accent-neon: #00f2ff;
+  --accent-hot: #ff2e63;
+  --accent-purple: #bc13fe;
+  --text-secondary: #888;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-dark);
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+}
+
+.animate-enter {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cyber-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.neon-glow {
+  text-shadow: 0 0 10px var(--accent-neon);
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--text-secondary);
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.predictive-pulse {
+    animation: predictive-glow 2s infinite ease-in-out;
+    filter: drop-shadow(0 0 10px var(--accent-hot));
+}
+
+@keyframes predictive-glow {
+    0% { fill-opacity: 0.1; stroke-width: 1; }
+    50% { fill-opacity: 0.3; stroke-width: 3; }
+    100% { fill-opacity: 0.1; stroke-width: 1; }
+}
+
+.hotspot-tag {
+  background: linear-gradient(45deg, var(--accent-hot), #ff4d4d);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Map specific fixes */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  background: #111 !important;
+}
+
+.leaflet-tile {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+
+======================================================
+FILE: client\src\main.jsx
+======================================================
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
+======================================================
+FILE: client\src\pages\DashboardOverview.jsx
+======================================================
+
+import React from 'react';
+import { useData } from '../context/DataContext';
+import Dashboard from '../components/Dashboard';
+import SmartInsights from '../components/SmartInsights';
+import AlertSystem from '../components/AlertSystem';
+import { RefreshCw, AlertCircle, Cpu, Activity } from 'lucide-react';
+import axios from 'axios';
+
+const DashboardOverview = () => {
+    const { crimes, hotspots, loading, fetchData } = useData();
+
+    const simulateIncident = async () => {
+        const types = ['Armed Robbery', 'Aggravated Assault', 'Vandalism', 'Cybercrime'];
+        const neighborhoods = ['Midtown', 'Lower Manhattan', 'Harlem', 'Brooklyn Heights'];
+        
+        const randomCrime = {
+            type: types[Math.floor(Math.random() * types.length)],
+            neighborhood: neighborhoods[Math.floor(Math.random() * neighborhoods.length)],
+            description: "CRITICAL: Simulated high-risk activity detected via AI pattern recognition.",
+            severity: "High",
+            location: {
+                lat: 40.7 + (Math.random() * 0.1),
+                lng: -74.0 + (Math.random() * 0.1)
+            },
+            timestamp: new Date()
+        };
+
+        try {
+            await axios.post('http://localhost:5000/api/crimes', randomCrime);
+            fetchData();
+        } catch (err) {
+            console.error('Simulation failed:', err);
+        }
+    };
+
+    return (
+        <div className="space-y-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-cyber-neon/10 border border-cyber-neon/20 rounded-2xl animate-glow-pulse">
+                        <Activity size={24} className="text-cyber-neon" />
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black tracking-tighter text-white uppercase flex items-center gap-3">
+                            System <span className="text-cyber-neon italic">Status</span>
+                        </h2>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]" />
+                            <p className="text-white/40 text-[10px] font-bold tracking-[0.2em] uppercase">Live Intelligence Feed Active</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                    <button 
+                        onClick={fetchData} 
+                        className="flex-1 md:flex-none glass-card !py-3 !px-6 flex items-center justify-center gap-2 text-xs font-bold tracking-widest uppercase hover:border-cyber-neon/50 transition-all active:scale-95"
+                    >
+                        <RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> SYNC_DATA
+                    </button>
+                    <button 
+                        onClick={simulateIncident} 
+                        className="flex-1 md:flex-none bg-cyber-hot text-white px-6 py-3 rounded-2xl text-xs font-black tracking-widest uppercase shadow-[0_0_20px_rgba(255,46,99,0.3)] hover:shadow-[0_0_30px_rgba(255,46,99,0.5)] transition-all active:scale-95 flex items-center justify-center gap-2"
+                    >
+                        <AlertCircle size={16} /> TRIGGER_ALERT
+                    </button>
+                </div>
+            </div>
+
+            <Dashboard crimes={crimes} hotspots={hotspots} />
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2">
+                    <div className="glass-card h-full">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Cpu size={20} className="text-cyber-neon" />
+                            <h3 className="text-sm font-black tracking-widest uppercase">Neural Activity Log</h3>
+                        </div>
+                        <SmartInsights crimes={crimes} />
+                    </div>
+                </div>
+                <div>
+                    {/* Placeholder for smaller sidebar widget if needed */}
+                    <div className="glass-card border-dashed border-white/5 bg-transparent h-full flex flex-col items-center justify-center text-center p-10">
+                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-white/10 flex items-center justify-center mb-4">
+                            <Shield className="text-white/10" size={32} />
+                        </div>
+                        <p className="text-[10px] font-bold tracking-widest text-white/20 uppercase">Awaiting External<br/>System Integration</p>
+                    </div>
+                </div>
+            </div>
+
+            <AlertSystem />
+        </div>
+    );
+};
+
+export default DashboardOverview;
+
+
+======================================================
+FILE: client\src\pages\Home.jsx
+======================================================
+
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import MapView from '../components/MapView';
+import HeatmapView from '../components/HeatmapView';
+import Dashboard from '../components/Dashboard';
+import TemporalAnalysis from '../components/TemporalAnalysis';
+import SmartInsights from '../components/SmartInsights';
+import AnalyticsDashboard from '../components/AnalyticsDashboard';
+import MLPredictions from '../components/MLPredictions';
+import TimeAnalytics from '../components/TimeAnalytics';
+import CategoryAnalysis from '../components/CategoryAnalysis';
+import AlertSystem from '../components/AlertSystem';
+import ReportModule from '../components/ReportModule';
+import { Search, Filter, RefreshCw, Shield, Clock, Map as MapIcon, Flame, AlertCircle, Layout } from 'lucide-react';
+
+const Home = () => {
+    const [crimes, setCrimes] = useState([]);
+    const [hotspots, setHotspots] = useState([]);
+    const [temporalData, setTemporalData] = useState([]);
+    const [trends, setTrends] = useState([]);
+    const [predictions, setPredictions] = useState([]);
+    const [analyticsData, setAnalyticsData] = useState(null);
+    const [timeDepthData, setTimeDepthData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [viewMode, setViewMode] = useState('standard'); // 'standard' or 'heatmap'
+
+    const simulateIncident = async () => {
+        const types = ['Armed Robbery', 'Aggravated Assault', 'Vandalism', 'Cybercrime'];
+        const neighborhoods = ['Midtown', 'Lower Manhattan', 'Harlem', 'Brooklyn Heights'];
+        
+        const randomCrime = {
+            type: types[Math.floor(Math.random() * types.length)],
+            neighborhood: neighborhoods[Math.floor(Math.random() * neighborhoods.length)],
+            description: "CRITICAL: Simulated high-risk activity detected via AI pattern recognition.",
+            severity: "High",
+            location: {
+                lat: 40.7 + (Math.random() * 0.1),
+                lng: -74.0 + (Math.random() * 0.1)
+            },
+            timestamp: new Date()
+        };
+
+        try {
+            await axios.post('http://localhost:5000/api/crimes', randomCrime);
+            fetchData(); // Refresh metrics
+        } catch (err) {
+            console.error('Simulation failed:', err);
+        }
+    };
+
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const [crimeRes, hotspotRes, temporalRes, trendRes, predRes, analyticsRes, timeDepthRes] = await Promise.all([
+                axios.get('http://localhost:5000/api/crimes'),
+                axios.get('http://localhost:5000/api/hotspots'),
+                axios.get('http://localhost:5000/api/analysis/temporal'),
+                axios.get('http://localhost:5000/api/analysis/hotspot-trends'),
+                axios.get('http://localhost:5000/api/analysis/predictions'),
+                axios.get('http://localhost:5000/api/analysis/advanced-stats'),
+                axios.get('http://localhost:5000/api/analysis/time-depth')
+            ]);
+            setCrimes(crimeRes.data);
+            setHotspots(hotspotRes.data);
+            setTemporalData(temporalRes.data);
+            setTrends(trendRes.data);
+            setPredictions(predRes.data);
+            setAnalyticsData(analyticsRes.data);
+            setTimeDepthData(timeDepthRes.data);
+        } catch (err) {
+            console.error('Error fetching crime data:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    return (
+        <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto' }}>
+            <header style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                    <h1 className="neon-glow" style={{ margin: 0, fontSize: '2rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Layout size={32} color="var(--accent-neon)" /> 
+                        CRIME PATTERN <span style={{ color: 'white' }}>SYSTEM</span>
+                        <span style={{ fontSize: '0.6rem', padding: '4px 10px', background: 'var(--accent-purple)', borderRadius: '20px', letterSpacing: '2px', marginLeft: '10px', boxShadow: '0 0 10px var(--accent-purple)' }}>ADMIN</span>
+                    </h1>
+                    <p style={{ color: 'var(--text-secondary)', margin: '8px 0 0 0' }}>Professional grade spatial intelligence & reporting dashboard</p>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <ReportModule crimes={crimes} analyticsData={analyticsData} />
+                    <div style={{ width: '1px', height: '30px', background: 'var(--glass-border)', margin: '0 10px' }}></div>
+                    <div style={{ background: 'var(--glass)', borderRadius: '12px', padding: '4px', display: 'flex', border: '1px solid var(--glass-border)' }}>
+                        <button 
+                            onClick={() => setViewMode('standard')}
+                            style={{ 
+                                padding: '8px 16px', 
+                                borderRadius: '8px', 
+                                border: 'none', 
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                background: viewMode === 'standard' ? 'var(--accent-neon)' : 'transparent',
+                                color: viewMode === 'standard' ? '#0a0a12' : 'white',
+                                transition: 'all 0.3s'
+                            }}
+                        >
+                            <MapIcon size={16} /> Standard
+                        </button>
+                        <button 
+                            onClick={() => setViewMode('heatmap')}
+                            style={{ 
+                                padding: '8px 16px', 
+                                borderRadius: '8px', 
+                                border: 'none', 
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                background: viewMode === 'heatmap' ? 'var(--accent-hot)' : 'transparent',
+                                color: viewMode === 'heatmap' ? 'white' : 'white',
+                                transition: 'all 0.3s'
+                            }}
+                        >
+                            <Flame size={16} /> Heatmap
+                        </button>
+                    </div>
+
+                    <button 
+                        onClick={fetchData}
+                        style={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', color: 'white', padding: '10px 20px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                        <RefreshCw size={18} className={loading ? 'animate-spin' : ''} /> Refresh Data
+                    </button>
+
+                    <button 
+                        onClick={simulateIncident}
+                        style={{ 
+                            background: 'var(--accent-hot)', 
+                            border: 'none', 
+                            color: 'white', 
+                            padding: '10px 20px', 
+                            borderRadius: '12px', 
+                            cursor: 'pointer', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '8px',
+                            fontWeight: 'bold',
+                            boxShadow: '0 0 15px rgba(255, 46, 99, 0.4)'
+                        }}
+                    >
+                        <AlertCircle size={18} /> Simulate Alert
+                    </button>
+                </div>
+            </header>
+            
+            <AlertSystem />
+
+            <Dashboard crimes={crimes} hotspots={hotspots} />
+
+            <TemporalAnalysis data={temporalData} />
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '24px' }}>
+                <div className="glass-card" style={{ padding: 0, overflow: 'hidden', height: '600px', position: 'relative' }}>
+                    {viewMode === 'standard' ? (
+                        <MapView crimes={crimes} hotspots={hotspots} predictions={predictions} />
+                    ) : (
+                        <HeatmapView crimes={crimes} />
+                    )}
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', height: '600px' }}>
+                    <SmartInsights predictions={predictions} />
+                    
+                    <div className="glass-card" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+                    <h3 style={{ margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Filter size={20} color="var(--accent-neon)" /> HOTSPOT INSIGHTS
+                    </h3>
+                    <div style={{ flex: 1, overflowY: 'auto' }}>
+                        {hotspots.map((spot, idx) => {
+                            const trend = trends.find(t => t._id === spot._id);
+                            return (
+                                <div key={idx} style={{ padding: '16px', borderBottom: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div>
+                                            <div style={{ fontWeight: 'bold' }}>{spot._id || 'Unknown Area'}</div>
+                                            <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{spot.count} reported incidents</div>
+                                        </div>
+                                        <span className="hotspot-tag">
+                                            {spot.count > 5 ? 'Critical' : 'Alert'}
+                                        </span>
+                                    </div>
+                                    {trend && (
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--accent-neon)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                            <Clock size={12} /> Peak activity: {trend.peakHour}:00
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+
+            <AnalyticsDashboard data={analyticsData} />
+
+            <TimeAnalytics data={timeDepthData} />
+
+            <CategoryAnalysis crimes={crimes} />
+            
+            <MLPredictions />
+        </div>
+    </div>
+);
+};
+
+export default Home;
+
+
+======================================================
+FILE: client\src\pages\PredictiveHub.jsx
+======================================================
+
+import React from 'react';
+import { useData } from '../context/DataContext';
+import MLPredictions from '../components/MLPredictions';
+import SmartInsights from '../components/SmartInsights';
+import { Brain } from 'lucide-react';
+
+const PredictiveHub = () => {
+    const { crimes } = useData();
+
+    return (
+        <div className="animate-enter">
+            <div style={{ marginBottom: '24px' }}>
+                <h2 style={{ margin: 0, fontSize: '1.8rem' }}>PREDICTIVE <span className="text-glow">HUB</span></h2>
+                <p style={{ color: 'var(--text-secondary)', margin: '4px 0 0 0' }}>Machine Learning & AI driven hotspot forecasting</p>
+            </div>
+
+            <MLPredictions />
+
+            <div style={{ marginTop: '32px' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Brain size={20} color="var(--accent-neon)" /> AI CONTEXTUAL INSIGHTS
+                </h3>
+                <SmartInsights crimes={crimes} />
+            </div>
+        </div>
+    );
+};
+
+export default PredictiveHub;
+
+
+======================================================
+FILE: client\src\pages\SocialSentinel.jsx
+======================================================
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Radio, Users, ShieldAlert, MessageSquare, MapPin, TrendingUp, AlertTriangle } from 'lucide-react';
+
+const SocialSentinel = () => {
+    const [stream, setStream] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState({ avgRisk: 0, criticalCount: 0 });
+
+    const fetchStream = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get('http://localhost:5000/api/social/stream');
+            setStream(res.data);
+            
+            const avg = res.data.reduce((acc, p) => acc + p.risk_score, 0) / res.data.length;
+            const critical = res.data.filter(p => p.is_threat).length;
+            setStats({ avgRisk: Math.round(avg), criticalCount: critical });
+        } catch (err) {
+            console.error('Sentinel error:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchStream();
+        const interval = setInterval(fetchStream, 15000); // Auto-refresh every 15s
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="space-y-8 animate-enter">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h2 className="text-3xl font-black tracking-tighter text-white uppercase">
+                        SOCIAL <span className="text-cyber-purple italic">SENTINEL</span>
+                    </h2>
+                    <p className="text-white/40 text-[10px] font-bold tracking-[0.2em] uppercase mt-1">Live Public Safety Sentiment Monitoring</p>
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className="glass-card !py-2 !px-4 flex items-center gap-4">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] text-white/40 font-bold uppercase">Avg Risk</span>
+                            <span className={`text-xl font-black ${stats.avgRisk > 40 ? 'text-cyber-hot' : 'text-cyber-neon'}`}>{stats.avgRisk}%</span>
+                        </div>
+                        <div className="w-[1px] h-8 bg-white/10" />
+                        <div className="flex flex-col">
+                            <span className="text-[10px] text-white/40 font-bold uppercase">Threats Found</span>
+                            <span className="text-xl font-black text-white">{stats.criticalCount}</span>
+                        </div>
+                    </div>
+                    <button onClick={fetchStream} className="p-3 bg-cyber-purple/20 border border-cyber-purple/40 rounded-xl hover:bg-cyber-purple/40 transition-all">
+                        <Radio size={20} className="text-cyber-purple animate-pulse" />
+                    </button>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Live Stream */}
+                <div className="lg:col-span-2 space-y-4 max-h-[700px] overflow-y-auto pr-4 custom-scrollbar">
+                    {loading && stream.length === 0 ? (
+                        <div className="text-center py-20 text-white/20 font-black tracking-widest uppercase text-xs">Scanning Digital Frequencies...</div>
+                    ) : (
+                        stream.map((post) => (
+                            <div key={post.id} className={`glass-card relative overflow-hidden transition-all hover:border-white/20 ${post.is_threat ? 'border-cyber-hot/50 bg-cyber-hot/5' : ''}`}>
+                                {post.is_threat && (
+                                    <div className="absolute top-0 right-0 px-3 py-1 bg-cyber-hot text-[8px] font-black tracking-widest text-white rounded-bl-xl shadow-[0_0_10px_#ff2e63]">
+                                        HIGH_THREAT_DETECTED
+                                    </div>
+                                )}
+                                <div className="flex gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                        <Users size={18} className="text-white/40" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-xs font-black text-cyber-neon tracking-wider">@{post.user}</span>
+                                            <span className="text-[10px] text-white/20 font-bold italic">{post.neighborhood}</span>
+                                        </div>
+                                        <p className="text-sm text-white/80 leading-relaxed mb-3">"{post.text}"</p>
+                                        <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest">
+                                            <div className="flex items-center gap-1 text-white/30">
+                                                <MapPin size={10} /> Localized Context
+                                            </div>
+                                            <div className={`flex items-center gap-1 ${post.risk_score > 50 ? 'text-cyber-hot' : 'text-cyber-neon/60'}`}>
+                                                <ShieldAlert size={10} /> Risk Score: {post.risk_score}
+                                            </div>
+                                            <div className="text-white/30 ml-auto italic">
+                                                {new Date(post.timestamp).toLocaleTimeString()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                {/* Sidebar Analytics */}
+                <div className="space-y-6">
+                    <div className="glass-card">
+                        <div className="flex items-center gap-2 mb-6">
+                            <TrendingUp size={18} className="text-cyber-purple" />
+                            <h3 className="text-xs font-black tracking-widest uppercase">Sentiment Distribution</h3>
+                        </div>
+                        <div className="space-y-4">
+                            {['Negative', 'Neutral', 'Positive'].map((label, idx) => (
+                                <div key={label}>
+                                    <div className="flex justify-between text-[10px] font-black uppercase mb-1">
+                                        <span>{label}</span>
+                                        <span>{idx === 0 ? '64%' : idx === 1 ? '24%' : '12%'}</span>
+                                    </div>
+                                    <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                                        <div 
+                                            className={`h-full ${idx === 0 ? 'bg-cyber-hot shadow-[0_0_8px_#ff2e63]' : idx === 1 ? 'bg-white/40' : 'bg-cyber-neon shadow-[0_0_8px_#00f2ff]'}`}
+                                            style={{ width: `${idx === 0 ? 64 : idx === 1 ? 24 : 12}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="glass-card bg-cyber-hot/5 border-cyber-hot/20 p-6 text-center">
+                        <AlertTriangle size={32} className="text-cyber-hot mx-auto mb-4 animate-glow-pulse" />
+                        <h3 className="text-xs font-black tracking-widest uppercase text-cyber-hot mb-2">Sentry Recommendation</h3>
+                        <p className="text-[10px] text-white/60 leading-relaxed font-bold italic">
+                            Social sentiment in <span className="text-white">Midtown</span> is currently UNSTABLE. Multiple reports of aggressive behavior detected. Suggesting enhanced perimeter monitoring.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default SocialSentinel;
+
+
+======================================================
+FILE: client\src\pages\SpatialIntelligence.jsx
+======================================================
+
+import React, { useState } from 'react';
+import { useData } from '../context/DataContext';
+import MapView from '../components/MapView';
+import HeatmapView from '../components/HeatmapView';
+import { Map as MapIcon, Flame } from 'lucide-react';
+
+const SpatialIntelligence = () => {
+    const { crimes, hotspots, predictions } = useData();
+    const [viewMode, setViewMode] = useState('standard');
+
+    return (
+        <div className="animate-enter">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <div>
+                    <h2 style={{ margin: 0, fontSize: '1.8rem' }}>SPATIAL <span className="text-glow">INTELLIGENCE</span></h2>
+                    <p style={{ color: 'var(--text-secondary)', margin: '4px 0 0 0' }}>Interactive geographic distribution and heatmaps</p>
+                </div>
+                <div style={{ background: 'var(--glass)', borderRadius: '12px', padding: '4px', display: 'flex', border: '1px solid var(--glass-border)' }}>
+                    <button 
+                        onClick={() => setViewMode('standard')}
+                        style={{ 
+                            padding: '8px 16px', 
+                            borderRadius: '8px', 
+                            border: 'none', 
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            background: viewMode === 'standard' ? 'var(--accent-neon)' : 'transparent',
+                            color: viewMode === 'standard' ? '#0a0a12' : 'white',
+                            transition: 'all 0.3s'
+                        }}
+                    >
+                        <MapIcon size={16} /> Standard
+                    </button>
+                    <button 
+                        onClick={() => setViewMode('heatmap')}
+                        style={{ 
+                            padding: '8px 16px', 
+                            borderRadius: '8px', 
+                            border: 'none', 
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            background: viewMode === 'heatmap' ? 'var(--accent-hot)' : 'transparent',
+                            color: viewMode === 'heatmap' ? 'white' : 'white',
+                            transition: 'all 0.3s'
+                        }}
+                    >
+                        <Flame size={16} /> Heatmap
+                    </button>
+                </div>
+            </div>
+
+            <div className="glass-card" style={{ padding: 0, overflow: 'hidden', height: '700px', position: 'relative' }}>
+                {viewMode === 'standard' ? (
+                    <MapView crimes={crimes} hotspots={hotspots} predictions={predictions} />
+                ) : (
+                    <HeatmapView crimes={crimes} />
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default SpatialIntelligence;
+
+
+======================================================
+FILE: client\src\pages\TrendCenter.jsx
+======================================================
+
+import React from 'react';
+import { useData } from '../context/DataContext';
+import AnalyticsDashboard from '../components/AnalyticsDashboard';
+import TimeAnalytics from '../components/TimeAnalytics';
+import { BarChart2 } from 'lucide-react';
+
+const TrendCenter = () => {
+    const { analyticsData, timeDepthData } = useData();
+
+    return (
+        <div className="animate-enter">
+            <div style={{ marginBottom: '24px' }}>
+                <h2 style={{ margin: 0, fontSize: '1.8rem' }}>TREND <span className="text-glow">CENTER</span></h2>
+                <p style={{ color: 'var(--text-secondary)', margin: '4px 0 0 0' }}>Comprehensive temporal and growth analytics</p>
+            </div>
+
+            <AnalyticsDashboard data={analyticsData} />
+            
+            <div style={{ marginTop: '32px' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <BarChart2 size={20} color="var(--accent-purple)" /> TEMPORAL INTENSITY ANALYSIS
+                </h3>
+                <TimeAnalytics data={timeDepthData} />
+            </div>
+        </div>
+    );
+};
+
+export default TrendCenter;
+
+
+======================================================
+FILE: server\analyze.js
+======================================================
+
+const mongoose = require('mongoose');
+const Crime = require('./models/Crime');
+require('dotenv').config();
+
+async function analyze() {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log('Connected to MongoDB for analysis...');
+
+    // 1. Analysis by Neighborhood (Location)
+    const neighborhoodAnalysis = await Crime.aggregate([
+        {
+            $group: {
+                _id: "$neighborhood",
+                count: { $sum: 1 },
+                avgSeverity: { $first: "$severity" } // Just for context
+            }
+        },
+        { $sort: { count: -1 } }
+    ]);
+
+    console.log('\n--- Location-Based Analysis (Hotspots) ---');
+    neighborhoodAnalysis.forEach(spot => {
+        console.log(`${spot._id}: ${spot.count} incidents`);
+    });
+
+    // 2. Analysis by Time of Day
+    const temporalAnalysis = await Crime.aggregate([
+        {
+            $project: {
+                hour: { $hour: "$timestamp" }
+            }
+        },
+        {
+            $group: {
+                _id: "$hour",
+                count: { $sum: 1 }
+            }
+        },
+        { $sort: { _id: 1 } }
+    ]);
+
+    console.log('\n--- Temporal Analysis (Hour of Day) ---');
+    temporalAnalysis.forEach(t => {
+        console.log(`${t._id.toString().padStart(2, '0')}:00 - ${t.count} incidents`);
+    });
+
+    // 3. Combined Analysis: Peak hours per neighborhood
+    const peakHours = await Crime.aggregate([
+        {
+            $project: {
+                neighborhood: 1,
+                hour: { $hour: "$timestamp" }
+            }
+        },
+        {
+            $group: {
+                _id: { neighborhood: "$neighborhood", hour: "$hour" },
+                count: { $sum: 1 }
+            }
+        },
+        { $sort: { count: -1 } },
+        {
+            $group: {
+                _id: "$_id.neighborhood",
+                peakHour: { $first: "$_id.hour" },
+                incidentCount: { $first: "$count" }
+            }
+        }
+    ]);
+
+    console.log('\n--- Combined Insights: Peak Activity per Neighborhood ---');
+    peakHours.forEach(p => {
+        console.log(`${p._id}: Peak hour at ${p.peakHour}:00 (${p.incidentCount} incidents)`);
+    });
+
+    await mongoose.disconnect();
+}
+
+analyze().catch(err => console.error(err));
+
+
+======================================================
+FILE: server\generate_report.js
+======================================================
+
+const fs = require('fs');
+const puppeteer = require('puppeteer-core');
+const { Document, Packer, Paragraph, TextRun, ImageRun, HeadingLevel, AlignmentType } = require('docx');
+const path = require('path');
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+async function generateReport() {
+    console.log("Starting report generation...");
+    
+    // Connect to local Edge browser
+    const browser = await puppeteer.launch({
+        executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+        headless: "new",
+        defaultViewport: { width: 1440, height: 900 }
+    });
+    
+    const page = await browser.newPage();
+    
+    const screenshots = [];
+    const routes = [
+        { name: 'Dashboard Overview', url: 'http://localhost:5174/', file: 'dashboard.png' },
+        { name: 'Spatial Intelligence', url: 'http://localhost:5174/maps', file: 'maps.png' },
+        { name: 'Predictive Hub', url: 'http://localhost:5174/predictions', file: 'forecast.png' },
+        { name: 'Trend Center', url: 'http://localhost:5174/analytics', file: 'trends.png' },
+        { name: 'Social Sentinel', url: 'http://localhost:5174/sentinel', file: 'sentinel.png' }
+    ];
+
+    for (const route of routes) {
+        console.log(`Capturing ${route.name}...`);
+        await page.goto(route.url, { waitUntil: 'networkidle0' });
+        await delay(2000); // Wait for animations
+        const imageBuffer = await page.screenshot({ type: 'png' });
+        screenshots.push({ name: route.name, buffer: imageBuffer });
+    }
+
+    await browser.close();
+    console.log("Screenshots captured. Building document...");
+
+    // Create Document
+    const sections = [
+        {
+            properties: {},
+            children: [
+                new Paragraph({
+                    text: "Crime Pattern Analysis System - Final Report",
+                    heading: HeadingLevel.TITLE,
+                    alignment: AlignmentType.CENTER,
+                    spacing: { after: 400 }
+                }),
+                new Paragraph({
+                    children: [
+                        new TextRun({
+                            text: "This document contains a comprehensive visual report of the Predictive Policing & Spatial Intelligence platform.",
+                            size: 24
+                        })
+                    ],
+                    spacing: { after: 400 }
+                })
+            ]
+        }
+    ];
+
+    // Add screenshots to document
+    for (const shot of screenshots) {
+        sections[0].children.push(
+            new Paragraph({
+                text: shot.name,
+                heading: HeadingLevel.HEADING_1,
+                spacing: { before: 400, after: 200 }
+            }),
+            new Paragraph({
+                children: [
+                    new ImageRun({
+                        data: shot.buffer,
+                        transformation: {
+                            width: 600,
+                            height: 375
+                        }
+                    })
+                ],
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 400 }
+            })
+        );
+    }
+
+    const doc = new Document({
+        creator: "Antigravity AI",
+        description: "Automated Crime Analysis Report",
+        sections: sections
+    });
+
+    const buffer = await Packer.toBuffer(doc);
+    const outputPath = path.join('C:\\Users\\m2005\\.gemini\\antigravity\\scratch\\crime-analysis', 'Crime_Analysis_Report.docx');
+    fs.writeFileSync(outputPath, buffer);
+    
+    console.log(`Report successfully generated at: ${outputPath}`);
+}
+
+generateReport().catch(console.error);
+
+
+======================================================
+FILE: server\index.js
+======================================================
+
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const apiRoutes = require('./routes/api');
+
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http, {
+    cors: { origin: "*" }
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(express.json());
+
+// Attach io to req
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
+
+// Routes
+app.use('/api', apiRoutes);
+
+// Socket Logic
+io.on('connection', (socket) => {
+    console.log('Client connected to alerts');
+    socket.on('disconnect', () => console.log('Client disconnected'));
+});
+
+// MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('Connected to MongoDB (Crime Analysis)'))
+    .catch(err => console.error('MongoDB error:', err));
+
+http.listen(PORT, () => {
+    console.log(`Crime Analysis Server running on port ${PORT}`);
+});
+
+
+======================================================
+FILE: server\ml\chat_service.py
+======================================================
+
+import sys
+import json
+
+def process_query(query, stats):
+    query = query.lower()
+    
+    # 1. Neighborhood Specific
+    neighborhoods = ["midtown", "lower manhattan", "harlem", "brooklyn heights"]
+    target_nh = next((nh for nh in neighborhoods if nh in query), None)
+    
+    if target_nh:
+        # Simple search in stats or generic response
+        return f"Analyzing {target_nh.title()}... Current data suggests elevated activity during evening hours. Our ML model predicts a 12% decrease in risk for the next 48 hours."
+
+    # 2. Top Risk Areas
+    if "most dangerous" in query or "highest risk" in query or "top" in query:
+        return "Based on recent spatial clusters, Harlem and Midtown currently show the highest density of incidents. I recommend reviewing the 'Spatial Intelligence' page for the full heatmap breakdown."
+
+    # 3. Total Stats
+    if "total" in query or "count" in query or "many" in query:
+        total = stats.get('totalCrimes', 'N/A')
+        return f"The system is currently tracking {total} active incidents across all sectors. High-severity alerts account for approximately 24% of this total."
+
+    # 4. System Help
+    if "help" in query or "what can you do" in query:
+        return "I am the Cyber Sentry AI. I can summarize neighborhood risks, provide real-time incident counts, and guide you through our predictive forecasting models. How can I assist your analysis?"
+
+    # 5. Default Response
+    return "I've analyzed your query against our live intelligence feed. For a deeper dive into these specific patterns, I suggest checking the 'Trend Center' for historical temporal correlations."
+
+if __name__ == "__main__":
+    try:
+        input_data = sys.stdin.read()
+        if not input_data:
+            print(json.dumps({"response": "No input received."}))
+            sys.exit(1)
+            
+        data = json.loads(input_data)
+        query = data.get('query', '')
+        stats = data.get('stats', {})
+        
+        response = process_query(query, stats)
+        print(json.dumps({"response": response}))
+    except Exception as e:
+        print(json.dumps({"response": f"AI Engine Error: {str(e)}"}))
+        sys.exit(1)
+
+
+======================================================
+FILE: server\ml\predict_service.py
+======================================================
+
+import joblib
+import pandas as pd
+import numpy as np
+import sys
+import json
+from datetime import datetime
+
+def predict():
+    try:
+        # Load model and encoders
+        model = joblib.load('models/crime_model.joblib')
+        le_type = joblib.load('models/le_type.joblib')
+        le_neighbor = joblib.load('models/le_neighbor.joblib')
+        loc_mapping = joblib.load('models/loc_mapping.joblib')
+        
+        # Get current time features
+        now = datetime.now()
+        hour = now.hour
+        day_of_week = now.weekday()
+        month = now.month
+        
+        # We predict for all crime types and find the most likely hotspots
+        all_types = le_type.classes_
+        results = []
+        
+        for crime_type in all_types:
+            type_encoded = le_type.transform([crime_type])[0]
+            
+            # Predict probabilities for each neighborhood
+            X = pd.DataFrame([[hour, day_of_week, month, type_encoded]], 
+                             columns=['hour', 'day_of_week', 'month', 'type_encoded'])
+            
+            probs = model.predict_proba(X)[0]
+            
+            # Get top neighborhoods
+            top_indices = np.argsort(probs)[-3:][::-1]
+            for idx in top_indices:
+                if probs[idx] > 0.1: # Threshold
+                    neighbor = le_neighbor.inverse_transform([idx])[0]
+                    loc = loc_mapping.get(neighbor, {'lat': 0, 'lng': 0})
+                    results.append({
+                        'neighborhood': neighbor,
+                        'crime_type': crime_type,
+                        'probability': round(float(probs[idx]) * 100, 2),
+                        'lat': loc['lat'],
+                        'lng': loc['lng']
+                    })
+        
+        # Sort by probability and return top 5
+        results = sorted(results, key=lambda x: x['probability'], reverse=True)[:5]
+        print(json.dumps(results))
+        
+    except Exception as e:
+        print(json.dumps({"error": str(e)}))
+
+if __name__ == "__main__":
+    predict()
+
+
+======================================================
+FILE: server\ml\sentiment_service.py
+======================================================
+
+import sys
+import json
+
+# Advanced Risk Lexicon
+RISK_KEYWORDS = {
+    'high': ['gun', 'shot', 'shooting', 'weapon', 'armed', 'robbery', 'riot', 'explosive', 'attack', 'kill'],
+    'medium': ['fight', 'theft', 'stolen', 'suspicious', 'danger', 'alert', 'police', 'chase', 'emergency'],
+    'low': ['noisy', 'loitering', 'argument', 'unpleasant', 'crowded', 'traffic']
+}
+
+def analyze_sentiment(text):
+    text = text.lower()
+    risk_score = 0
+    
+    # Calculate Risk Score
+    for level, words in RISK_KEYWORDS.items():
+        for word in words:
+            if word in text:
+                if level == 'high': risk_score += 40
+                elif level == 'medium': risk_score += 20
+                elif level == 'low': risk_score += 10
+    
+    risk_score = min(risk_score, 100)
+    
+    # Simple Sentiment (Mock)
+    # Higher risk usually means negative sentiment
+    sentiment = "Negative" if risk_score > 30 else "Neutral"
+    if risk_score > 70: sentiment = "Critical"
+    
+    return {
+        "text": text,
+        "risk_score": risk_score,
+        "sentiment": sentiment,
+        "is_threat": risk_score >= 80
+    }
+
+if __name__ == "__main__":
+    try:
+        # Expecting JSON input via stdin
+        input_data = sys.stdin.read()
+        if not input_data:
+            print(json.dumps({"error": "No input provided"}))
+            sys.exit(1)
+            
+        data = json.loads(input_data)
+        text = data.get('text', '')
+        
+        result = analyze_sentiment(text)
+        print(json.dumps(result))
+    except Exception as e:
+        print(json.dumps({"error": str(e)}))
+
+
+======================================================
+FILE: server\ml\train_model.py
+======================================================
+
+import pandas as pd
+import numpy as np
+from pymongo import MongoClient
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
+import joblib
+import os
+from datetime import datetime
+
+# MongoDB Connection
+MONGO_URI = "mongodb://localhost:27017/"
+DB_NAME = "crime-analysis"
+
+def train():
+    print("Fetching data from MongoDB...")
+    client = MongoClient(MONGO_URI)
+    db = client[DB_NAME]
+    collection = db["crimes"]
+    
+    data = list(collection.find())
+    if not data:
+        print("No data found to train model.")
+        return
+
+    df = pd.DataFrame(data)
+    
+    # Feature Engineering
+    print("Preprocessing data...")
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    df['hour'] = df['timestamp'].dt.hour
+    df['day_of_week'] = df['timestamp'].dt.dayofweek
+    df['month'] = df['timestamp'].dt.month
+    
+    # Encode Categorical Data
+    le_type = LabelEncoder()
+    le_neighbor = LabelEncoder()
+    
+    df['type_encoded'] = le_type.fit_transform(df['type'])
+    df['neighbor_encoded'] = le_neighbor.fit_transform(df['neighborhood'])
+    
+    # Features and Target
+    # Goal: Predict the neighborhood based on time and type
+    X = df[['hour', 'day_of_week', 'month', 'type_encoded']]
+    y = df['neighbor_encoded']
+    
+    print(f"Training Random Forest on {len(df)} records...")
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X, y)
+    
+    # Save Model and Encoders
+    print("Saving model and metadata...")
+    os.makedirs('models', exist_ok=True)
+    joblib.dump(model, 'models/crime_model.joblib')
+    joblib.dump(le_type, 'models/le_type.joblib')
+    joblib.dump(le_neighbor, 'models/le_neighbor.joblib')
+    
+    # Save location mapping for neighborhoods
+    df['lat'] = df['location'].apply(lambda x: x.get('lat', 0))
+    df['lng'] = df['location'].apply(lambda x: x.get('lng', 0))
+    
+    loc_mapping = df.groupby('neighborhood').agg({
+        'lat': 'first',
+        'lng': 'first'
+    }).to_dict('index')
+    joblib.dump(loc_mapping, 'models/loc_mapping.joblib')
+    
+    print("Training complete. Model saved in server/ml/models/")
+
+if __name__ == "__main__":
+    train()
+
+
+======================================================
+FILE: server\models\Crime.js
+======================================================
+
+const mongoose = require('mongoose');
+
+const crimeSchema = new mongoose.Schema({
+    type: { type: String, required: true },
+    location: {
+        lat: { type: Number, required: true },
+        lng: { type: Number, required: true }
+    },
+    timestamp: { type: Date, default: Date.now },
+    severity: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium' },
+    description: String,
+    neighborhood: String
+});
+
+module.exports = mongoose.model('Crime', crimeSchema);
+
+
+======================================================
+FILE: server\package.json
+======================================================
+
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "docx": "^9.6.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.6.1",
+    "nodemon": "^3.1.14",
+    "puppeteer-core": "^24.43.0",
+    "socket.io": "^4.8.3"
+  }
+}
+
+
+======================================================
+FILE: server\routes\api.js
+======================================================
+
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const { spawn } = require('child_process');
+const path = require('path');
+const Crime = require('../models/Crime');
+
+console.log('--- API ROUTES LOADED ---');
+
+// 1. Predictive Hotspots (Moved to top)
+router.get('/analysis/predictions', async (req, res) => {
+    try {
+        const crimes = await Crime.find();
+        const now = new Date();
+        const currentHour = now.getHours();
+
+        const neighborhoodData = crimes.reduce((acc, crime) => {
+            const nh = crime.neighborhood;
+            if (!acc[nh]) acc[nh] = { count: 0, timeMatches: 0, highSeverity: 0, lat: crime.location.lat, lng: crime.location.lng };
+            acc[nh].count++;
+            
+            const crimeHour = new Date(crime.timestamp).getHours();
+            if (Math.abs(crimeHour - currentHour) <= 2) acc[nh].timeMatches++;
+            if (crime.severity === 'High') acc[nh].highSeverity++;
+            
+            return acc;
+        }, {});
+
+        const predictions = Object.keys(neighborhoodData).map(nh => {
+            const data = neighborhoodData[nh];
+            const freqScore = Math.min(data.count / 5, 1) * 40;
+            const timeScore = Math.min(data.timeMatches / 3, 1) * 40;
+            const sevScore = Math.min(data.highSeverity / 2, 1) * 20;
+            
+            const riskScore = freqScore + timeScore + sevScore;
+            
+            let insight = "Stable activity.";
+            if (riskScore > 70) insight = "High risk predicted due to historical temporal patterns and severity.";
+            else if (riskScore > 40) insight = "Moderate risk: elevated activity during these hours.";
+
+            return {
+                neighborhood: nh,
+                lat: data.lat,
+                lng: data.lng,
+                riskScore: Math.round(riskScore),
+                level: riskScore > 70 ? 'Critical' : riskScore > 40 ? 'Warning' : 'Low',
+                insight
+            };
+        });
+
+        res.json(predictions.sort((a, b) => b.riskScore - a.riskScore));
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// ML-Driven Predictions (Python Integration)
+router.get('/analysis/ml-predictions', async (req, res) => {
+    try {
+        const pythonProcess = spawn('python', [
+            path.join(__dirname, '../ml/predict_service.py')
+        ], {
+            cwd: path.join(__dirname, '../ml')
+        });
+
+        let dataString = '';
+        pythonProcess.stdout.on('data', (data) => {
+            dataString += data.toString();
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`Python error: ${data}`);
+        });
+
+        pythonProcess.on('close', (code) => {
+            if (code !== 0) {
+                return res.status(500).json({ message: 'ML service failed' });
+            }
+            try {
+                const predictions = JSON.parse(dataString);
+                res.json(predictions);
+            } catch (e) {
+                res.status(500).json({ message: 'Invalid ML response' });
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Get all crimes
+router.get('/crimes', async (req, res) => {
+    try {
+        const { startDate, endDate } = req.query;
+        let query = {};
+        if (startDate || endDate) {
+            query.timestamp = {};
+            if (startDate) query.timestamp.$gte = new Date(startDate);
+            if (endDate) query.timestamp.$lte = new Date(endDate);
+        }
+        const crimes = await Crime.find(query);
+        res.json(crimes);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Add new crime
+router.post('/crimes', async (req, res) => {
+    const crime = new Crime(req.body);
+    try {
+        const newCrime = await crime.save();
+        
+        // Real-time Alert for High Severity
+        if (newCrime.severity === 'High') {
+            req.io.emit('CRIME_ALERT', newCrime);
+        }
+
+        res.status(201).json(newCrime);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Get hotspot stats (basic clustering)
+router.get('/hotspots', async (req, res) => {
+    try {
+        const { startDate, endDate } = req.query;
+        let match = {};
+        if (startDate || endDate) {
+            match.timestamp = {};
+            if (startDate) match.timestamp.$gte = new Date(startDate);
+            if (endDate) match.timestamp.$lte = new Date(endDate);
+        }
+
+        const hotspots = await Crime.aggregate([
+            { $match: match },
+            {
+                $group: {
+                    _id: "$neighborhood",
+                    count: { $sum: 1 },
+                    avgLat: { $avg: "$location.lat" },
+                    avgLng: { $avg: "$location.lng" },
+                    types: { $addToSet: "$type" }
+                }
+            },
+            { $sort: { count: -1 } }
+        ]);
+        res.json(hotspots);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Temporal Analysis (by Hour)
+router.get('/analysis/temporal', async (req, res) => {
+    try {
+        const { startDate, endDate } = req.query;
+        let match = {};
+        if (startDate || endDate) {
+            match.timestamp = {};
+            if (startDate) match.timestamp.$gte = new Date(startDate);
+            if (endDate) match.timestamp.$lte = new Date(endDate);
+        }
+
+        const temporal = await Crime.aggregate([
+            { $match: match },
+            {
+                $project: {
+                    hour: { $hour: "$timestamp" },
+                    day: { $dayOfWeek: "$timestamp" }
+                }
+            },
+            {
+                $group: {
+                    _id: "$hour",
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+        res.json(temporal);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Hotspot Trends (Peak hours per neighborhood)
+router.get('/analysis/hotspot-trends', async (req, res) => {
+    try {
+        const { startDate, endDate } = req.query;
+        let match = {};
+        if (startDate || endDate) {
+            match.timestamp = {};
+            if (startDate) match.timestamp.$gte = new Date(startDate);
+            if (endDate) match.timestamp.$lte = new Date(endDate);
+        }
+
+        const trends = await Crime.aggregate([
+            { $match: match },
+            {
+                $project: {
+                    neighborhood: 1,
+                    hour: { $hour: "$timestamp" }
+                }
+            },
+            {
+                $group: {
+                    _id: { neighborhood: "$neighborhood", hour: "$hour" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { count: -1 } },
+            {
+                $group: {
+                    _id: "$_id.neighborhood",
+                    peakHour: { $first: "$_id.hour" },
+                    count: { $first: "$count" }
+                }
+            }
+        ]);
+        res.json(trends);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Advanced Analytics for Dashboard
+router.get('/analysis/advanced-stats', async (req, res) => {
+    try {
+        const now = new Date();
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        const lastYear = new Date(now.getFullYear() - 1, 0, 1);
+
+        // 1. Monthly Growth (Last 12 months)
+        const growth = await Crime.aggregate([
+            {
+                $group: {
+                    _id: { month: { $month: "$timestamp" }, year: { $year: "$timestamp" } },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1 } },
+            { $limit: 12 }
+        ]);
+
+        // 2. Category Distribution
+        const categories = await Crime.aggregate([
+            {
+                $group: {
+                    _id: "$type",
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { count: -1 } }
+        ]);
+
+        // 3. Yearly Comparison
+        const yearly = await Crime.aggregate([
+            {
+                $group: {
+                    _id: { $year: "$timestamp" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+
+        res.json({
+            growth: growth.map(g => ({
+                month: `${g._id.month}/${g._id.year}`,
+                count: g.count
+            })),
+            categories: categories.map(c => ({
+                name: c._id,
+                value: c.count
+            })),
+            yearly: yearly.map(y => ({
+                year: y._id,
+                count: y.count
+            }))
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Deep Time-Based Analytics
+router.get('/analysis/time-depth', async (req, res) => {
+    try {
+        const hourly = await Crime.aggregate([
+            { $group: { _id: { $hour: "$timestamp" }, count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const daily = await Crime.aggregate([
+            { $group: { _id: { $dayOfWeek: "$timestamp" }, count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        const seasonal = await Crime.aggregate([
+            { $group: { _id: { $month: "$timestamp" }, count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        res.json({
+            hourly: Array.from({ length: 24 }, (_, i) => ({
+                hour: `${i}:00`,
+                count: hourly.find(h => h._id === i)?.count || 0
+            })),
+            daily: daily.map(d => ({
+                day: days[d._id - 1],
+                count: d.count
+            })),
+            seasonal: seasonal.map(s => ({
+                month: new Date(2000, s._id - 1).toLocaleString('default', { month: 'short' }),
+                count: s.count
+            }))
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Social Media Sentinel Simulation
+const MOCK_POSTS = [
+    "Hearing loud bangs near Midtown, stay safe everyone!",
+    "Lots of police cars heading towards Harlem right now.",
+    "Suspicious individual spotted in the park near Brooklyn Heights.",
+    "Just another quiet evening in Midtown. #Peaceful",
+    "Someone just broke a window on my street! #Emergency",
+    "Anyone else see the large crowd forming in Lower Manhattan?",
+    "Avoid the subway station, looks like a major fight is breaking out.",
+    "Beautiful sunset over the skyline tonight.",
+    "My bike was stolen from my porch! Third time this month.",
+    "URGENT: Man seen with a weapon near the shopping mall."
+];
+
+router.get('/social/stream', async (req, res) => {
+    const neighborhoods = ['Midtown', 'Lower Manhattan', 'Harlem', 'Brooklyn Heights'];
+    const users = ['SafetyWatcher', 'NY_Local', 'Citizen_X', 'UrbanSentinel', 'DailyNews_Bot'];
+    
+    const posts = Array.from({ length: 15 }, () => {
+        const text = MOCK_POSTS[Math.floor(Math.random() * MOCK_POSTS.length)];
+        return {
+            id: Math.random().toString(36).substr(2, 9),
+            user: users[Math.floor(Math.random() * users.length)],
+            text: text,
+            neighborhood: neighborhoods[Math.floor(Math.random() * neighborhoods.length)],
+            timestamp: new Date(Date.now() - Math.random() * 3600000)
+        };
+    });
+    
+    // Simple internal sentiment analysis for the feed
+    const analyzedPosts = await Promise.all(posts.map(async post => {
+        return new Promise((resolve) => {
+            const python = spawn('python.exe', [path.join(__dirname, '../ml/sentiment_service.py')]);
+            let result = '';
+            
+            python.stdin.write(JSON.stringify({ text: post.text }));
+            python.stdin.end();
+            
+            python.stdout.on('data', (data) => {
+                result += data.toString();
+            });
+            
+            python.on('close', () => {
+                try {
+                    const analysis = JSON.parse(result);
+                    resolve({ ...post, ...analysis });
+                } catch (e) {
+                    resolve({ ...post, risk_score: 0, sentiment: 'Neutral' });
+                }
+            });
+        });
+    }));
+    
+    res.json(analyzedPosts.sort((a, b) => b.timestamp - a.timestamp));
+});
+
+// AI Chat Assistant
+router.post('/chat', async (req, res) => {
+    const { query, stats } = req.body;
+    
+    const python = spawn('python.exe', [path.join(__dirname, '../ml/chat_service.py')]);
+    let result = '';
+    
+    python.stdin.write(JSON.stringify({ query, stats }));
+    python.stdin.end();
+    
+    python.stdout.on('data', (data) => {
+        result += data.toString();
+    });
+    
+    python.on('close', () => {
+        try {
+            res.json(JSON.parse(result));
+        } catch (e) {
+            res.json({ response: "I'm having trouble processing that right now. Please try again." });
+        }
+    });
+});
+
+module.exports = router;
+
+
+======================================================
+FILE: server\seed.js
+======================================================
+
+const mongoose = require('mongoose');
+require('dotenv').config();
+const Crime = require('./models/Crime');
+
+const seedData = [
+    {
+        type: "Armed Robbery",
+        location: { lat: 40.7128, lng: -74.0060 },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+        severity: "High",
+        neighborhood: "Lower Manhattan",
+        description: "Robbery at a convenience store."
+    },
+    {
+        type: "Vandalism",
+        location: { lat: 40.7200, lng: -74.0100 },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 14), // 14 hours ago
+        severity: "Low",
+        neighborhood: "Lower Manhattan",
+        description: "Graffiti on public property."
+    },
+    {
+        type: "Assault",
+        location: { lat: 40.7580, lng: -73.9855 },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
+        severity: "High",
+        neighborhood: "Midtown",
+        description: "Physical altercation in Times Square."
+    },
+    {
+        type: "Burglary",
+        location: { lat: 40.7590, lng: -73.9840 },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 36), // 36 hours ago
+        severity: "Medium",
+        neighborhood: "Midtown",
+        description: "Office break-in reported."
+    },
+    {
+        type: "Theft",
+        location: { lat: 40.8075, lng: -73.9626 },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 72), // 3 days ago
+        severity: "Medium",
+        neighborhood: "Morningside Heights",
+        description: "Bicycle theft from campus."
+    },
+    {
+        type: "Shoplifting",
+        location: { lat: 40.7060, lng: -74.0088 },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 20), // 20 hours ago
+        severity: "Low",
+        neighborhood: "Financial District",
+        description: "Petty theft at retail store."
+    },
+    {
+        type: "Aggravated Assault",
+        location: { lat: 40.7150, lng: -74.0020 },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+        severity: "High",
+        neighborhood: "Lower Manhattan",
+        description: "Serious altercation in a parking garage."
+    },
+    {
+        type: "Car Theft",
+        location: { lat: 40.7550, lng: -73.9900 },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 8), // 8 hours ago
+        severity: "High",
+        neighborhood: "Midtown",
+        description: "Vehicle stolen from street parking."
+    }
+];
+
+const seedDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+        await Crime.deleteMany({});
+        await Crime.insertMany(seedData);
+        console.log("Database Seeded Successfully!");
+        process.exit();
+    } catch (err) {
+        console.error(err);
+        process.exit(1);
+    }
+};
+
+seedDB();
+
+
+======================================================
+FILE: client/index.html
+======================================================
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>client</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
